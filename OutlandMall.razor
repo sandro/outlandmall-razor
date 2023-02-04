@@ -151,7 +151,7 @@ while not dead
           dclick 'mainBackpack'
           wait timeout
           @ignore mainBackpack
-          for x in items
+          foreach x in items
             if findtype x "mainBackpack" as foundItem
               getlabel 'foundItem' foundItemLabel
               sysmsg "…item {{foundItemLabel}}" 23
@@ -164,7 +164,7 @@ while not dead
               if "Price: Not for sale" in desc
                 dclick container
                 wait timeout
-                for x in items
+                foreach x in items
                   if findtype x "container" as foundItem
                     getlabel 'foundItem' foundItemLabel
                     sysmsg "…item {{foundItemLabel}}" 23
