@@ -16,7 +16,7 @@ Global $StartRazorHotkey = "^!;"
 
 ; ###########
 ; Program Variables
-AutoItSetOption("PixelCoordMode", 0)
+AutoItSetOption("PixelCoordMode", 2)
 Global $scale = _WinAPI_EnumDisplaySettings('', $ENUM_CURRENT_SETTINGS)[0] / @DesktopWidth
 Global $logoutGump = 4282424686
 Global $atlasGump = 3941495494
@@ -64,7 +64,7 @@ Func GetAtlasChecksum($wh)
 EndFunc
 
 Func GetScaledChecksum($left, $top, $right, $bottom, $wh)
-	Local $cksum = PixelChecksum($left*$scale, $top*$scale, $right*$scale, $bottom*$scale, 1, $wh)
+	Local $cksum = PixelChecksum($left*$scale, $top*$scale, $right*$scale, $bottom*$scale, 1, $wh, 1)
 	return $cksum
 EndFunc
 
