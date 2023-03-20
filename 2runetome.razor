@@ -4,8 +4,8 @@ setvar! timeout 650
 clearsysmsg 
 removelist 'vendors'
 createlist 'vendors'
-removelist 'runetomeSpots'
-createlist 'runetomeSpots'
+removelist "runetomeSpots"
+createlist "runetomeSpots"
 
 # Add recall locations here.
 # Location 100 is the first rune in the tome. 101 is the second, and so on.
@@ -41,13 +41,30 @@ pushlist 'runetomeSpots' 125
 //stop
 
 if not listexists "OutlandMallsRuneTomes"
-    sysmsg 'creating list'
     createlist "OutlandMallsRuneTomes"
-    pushlist "OutlandMallsRuneTomes" 0x55cfc89c
-    pushlist "OutlandMallsRuneTomes" 0x46ac8b09
-    pushlist "OutlandMallsRuneTomes" 0x55cfc448
-    pushlist "OutlandMallsRuneTomes" 0x52ff131b
 endif
+if not inlist "OutlandMallsRuneTomes" 1439680668
+    sysmsg "adding 1 to list" 55
+    pushlist "OutlandMallsRuneTomes" 1439680668
+endif
+if not inlist "OutlandMallsRuneTomes" 1185712905
+    sysmsg "adding 2 to list" 55
+    pushlist "OutlandMallsRuneTomes" 1185712905
+endif
+if not inlist "OutlandMallsRuneTomes" 1392448283
+    sysmsg "adding 3 to list" 55
+    pushlist "OutlandMallsRuneTomes" 1392448283
+endif
+if not inlist "OutlandMallsRuneTomes" 1439679560
+    sysmsg "adding 4 to list" 55
+    pushlist "OutlandMallsRuneTomes" 1439679560
+endif
+//if not inlist "OutlandMallsRuneTomes" 1080596107
+//    pushlist "OutlandMallsRuneTomes" 1080596107
+//endif
+//if not inlist "OutlandMallsRuneTomes" 1080612838
+//    pushlist "OutlandMallsRuneTomes" 1080612838
+//endif
 
 if not findtype 'runetome' backpack
     overhead 'NO TOME' 19
@@ -57,13 +74,13 @@ endif
 @setvar! myTome 0
 while myTome = 0
     if poplist "OutlandMallsRuneTomes" front as tome
+        pushlist "OutlandMallsRuneTomes" tome back
         if find tome backpack
-            @unsetvar myTome
+            @unsetvar! myTome
             @setvar! myTome tome
             getlabel tome tomeName
             sysmsg "Using tome {{tomeName}} {{tome}}" 55
         endif
-        pushlist "OutlandMallsRuneTomes" tome back
     else
         overhead "LIST EMPTY" 19
         stop
@@ -86,17 +103,17 @@ endwhile
 //if findtype "storage shelf" ground -1 -1 2 as shelf
 //    menu shelf 1
 //    wait 500
-//    if findtype 'runetome|runebook' backpack as tome
-//        if findtype 8012 backpack as item
-//        wait 1000
-//        lift item 100
-//        wait 1000
-//        drop tome
-//        wait 1000
-//        lift item 100
+//    if findtype 8012 backpack as scrolls
+//      wait 1000
+//      lift scrolls 50
+//      wait 1000
+//      drop myTome
+//      wait 1000
+//      if findtype 8012 backpack as scrolls
+//        lift scrolls 50
 //        wait 1000
 //        drop shelf
-//        endif
+//      endif
 //    endif
 //    overhead 'resupply done'
 //else
@@ -106,13 +123,13 @@ if findtype "ph chest" ground -1 -1 2 as chest
     dclick chest
     wait timeout
     if findtype 8012 chest as scrolls
-        sysmsg "lifting scrolls"
+        sysmsg "lifting scrolls" 55
         lift scrolls 50
         drop backpack
         wait timeout
         lift scrolls 50
         drop myTome
-        sysmsg "dropping scrolls on runebook"
+        sysmsg "dropping scrolls on runebook" 55
         wait timeout
         if findtype 8012 backpack as scrolls
             lift scrolls 50
@@ -137,7 +154,7 @@ while not dead
         say '[atlas'        
     stop
     elseif poplist 'runetomeSpots' front as spot
-        overhead 'recalling to spot {{spot}} in {{myTome}}'
+        sysmsg 'recalling to spot {{spot}} in {{myTome}}' 55
         dclick myTome
         waitforgump 167090027
         gumpresponse spot 167090027
