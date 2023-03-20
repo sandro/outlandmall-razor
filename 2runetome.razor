@@ -1,6 +1,6 @@
 # OutlandMall by Sandro & Gankstar
 setvar! timeout 650
-clearignore
+@clearignore
 clearsysmsg 
 removelist 'vendors'
 createlist 'vendors'
@@ -36,14 +36,23 @@ pushlist 'runetomeSpots' 123
 pushlist 'runetomeSpots' 124
 pushlist 'runetomeSpots' 125
 
+// Uncomment and play once to reset list of rune tomes. Then re-comment.
+//removelist "OutlandMallsRuneTomes"
+//stop
+
 if not listexists "OutlandMallsRuneTomes"
+    sysmsg 'creating list'
     createlist "OutlandMallsRuneTomes"
+    pushlist "OutlandMallsRuneTomes" 0x55cfc89c
+    pushlist "OutlandMallsRuneTomes" 0x46ac8b09
+    pushlist "OutlandMallsRuneTomes" 0x55cfc448
+    pushlist "OutlandMallsRuneTomes" 0x52ff131b
 endif
 
-pushlist "OutlandMallsRuneTomes" 0x123
-pushlist "OutlandMallsRuneTomes" 0x123
-pushlist "OutlandMallsRuneTomes" 0x123
-pushlist "OutlandMallsRuneTomes" 0x123
+if not findtype 'runetome' backpack
+    overhead 'NO TOME' 19
+    stop
+endif
 
 @setvar! myTome 0
 while myTome = 0
@@ -55,6 +64,9 @@ while myTome = 0
             sysmsg "Using tome {{tomeName}} {{tome}}" 55
         endif
         pushlist "OutlandMallsRuneTomes" tome back
+    else
+        overhead "LIST EMPTY" 19
+        stop
     endif
 endwhile
 
