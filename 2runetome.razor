@@ -40,40 +40,23 @@ if not listexists "OutlandMallsRuneTomes"
     createlist "OutlandMallsRuneTomes"
 endif
 
-@setvar! hasTome 0
-while findtype "runetome" backpack as tome
-    sysmsg "tome is {{tome}}"
-    @ignore tome
-    @setvar! hasTome 1
-    if not inlist "OutlandMallsRuneTomes" tome
-        pushlist "OutlandMallsRuneTomes" tome back
-    endif
-endwhile
-if hasTome = 0
-    overhead "NO TOME" 18
-    stop
-endif
-clearignore
+pushlist "OutlandMallsRuneTomes" 0x123
+pushlist "OutlandMallsRuneTomes" 0x123
+pushlist "OutlandMallsRuneTomes" 0x123
+pushlist "OutlandMallsRuneTomes" 0x123
+
 @setvar! myTome 0
 while myTome = 0
     if poplist "OutlandMallsRuneTomes" front as tome
         if find tome backpack
             @unsetvar myTome
             @setvar! myTome tome
+            getlabel tome tomeName
+            sysmsg "Using tome {{tomeName}} {{tome}}" 55
         endif
         pushlist "OutlandMallsRuneTomes" tome back
     endif
 endwhile
-
-foreach tome in "OutlandMallsRuneTomes"
-    sysmsg tome 44
-    if find tome backpack
-        getlabel tome tomeName
-        sysmsg "tome {{tomeName}} {{tome}} in backpack {{myTome}}"
-    else
-        sysmsg "tome {{tome}} not here"
-    endif
-endfor
 
 //wait 450000
 //walk "South"
@@ -133,6 +116,10 @@ while not dead
         walk "South"
         walk "North"
         walk "North"
+        walk "East"
+        walk "East"
+        walk "West"
+        walk "West"
         skill 'hiding'
         wait 45000
         say '[atlas'        
@@ -146,7 +133,6 @@ while not dead
     endif
         
     skill 'hiding'
-    wait timeout
     wait 5000
     sysmsg "…OutlandMall Start" 23
     wait 2000
@@ -167,7 +153,6 @@ while not dead
                 pushlist 'vendors' 'vendorID'
                 sysmsg "…vendorStart {{vendorID}} {{vendorName}}" 23
             endif
-            
       
             while not hidden
                 skill 'hiding'
