@@ -19,7 +19,7 @@ Global $StartRazorHotkey = "^!;"
 AutoItSetOption("PixelCoordMode", 2)
 Global $scale = _WinAPI_EnumDisplaySettings('', $ENUM_CURRENT_SETTINGS)[0] / @DesktopWidth
 Global $logoutGump = 4282424686
-Global $atlasGump = 3941495494
+Global $atlasGumps[]
 Global $atlasCoords = [350, 320, 370, 340]
 ConsoleWrite("Scale = " & _WinAPI_EnumDisplaySettings('', $ENUM_CURRENT_SETTINGS)[0] & " / " & @DesktopWidth & " = " & $scale & @CRLF)
 Global $GUI = GUICreate("Outlands Mall", 400, 300)
@@ -151,19 +151,16 @@ EndFunc
 
 Func Main()
 	Local $UOHandles = GatherUOHandles()
-	Local $firstWindow = $UOHandles[0]
-	WinActivate($firstWindow)
-	WinWaitActive($firstWindow)
-	$atlasGump = GetAtlasChecksum($firstWindow)
-	MouseClick("right", $atlasCoords[0], $atlasCoords[1])
-	GUILog("Have atlas checksum " & $atlasGump)
-	Sleep(1000)
 
     For $wh in $UOHandles
 		WinActivate($wh)
 		WinWaitActive($wh)
 		SendKeepActive($wh)
 		Sleep(3000)
+		$atlasGumps[$wh] = GetAtlasChecksum($wh)
+		MouseClick("right", $atlasCoords[0], $atlasCoords[1])
+		GUILog("Have atlas checksum for " & WinGetTitle($wh) & " " & $atlasGumps[$wh])
+		Sleep(1000)
 		GUILog("Starting script in window " & WinGetTitle($wh))
         Send($StartRazorHotkey) ; Start Script macro
         Sleep(3000)
@@ -181,7 +178,7 @@ Func Main()
 			local $waitactive = WinWaitActive($wh)
 			GUILog("waitactive? " & $waitactive)
 			MouseMove(0,0,0)
-			If GetScaledChecksum($atlasCoords[0], $atlasCoords[1], $atlasCoords[2], $atlasCoords[3], $wh) == $atlasGump Then
+			If GetScaledChecksum($atlasCoords[0], $atlasCoords[1], $atlasCoords[2], $atlasCoords[3], $wh) == $atlasGumps[$wh] Then
 				GUILog("Sending Quit Hotkey for " & WinGetTitle($wh))
 				Send($QuitHotkey) ; QuitGame macro
 				Sleep(1000)
@@ -192,7 +189,7 @@ Func Main()
 				Sleep(20000)
 				LoginToUO($wh)
 				GUILog("Waiting 15s before starting script")
-				Sleep(15000)
+				Sleep(20000)
 				GUILog("Starting razor script " & WinGetTitle($wh))
 				WinActivate($wh)
 				WinWaitActive($wh)
