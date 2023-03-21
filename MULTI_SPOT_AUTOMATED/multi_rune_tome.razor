@@ -36,36 +36,34 @@ pushlist 'runetomeSpots' 123
 pushlist 'runetomeSpots' 124
 pushlist 'runetomeSpots' 125
 
-// Uncomment and play once to reset list of rune tomes. Then re-comment.
-//removelist "OutlandMallsRuneTomes"
-//stop
+// CONVERT THE ID OF YOUR RUNE TOME USING  https://www.rapidtables.com/convert/number/hex-to-decimal.html
+// REPLACE THE NUMBERS BELOW WITH YOUR RUNE TOME HEX CODE, EACH BLOCK STANDS FOR 1 RUNE TOME
+// COMMENT OUT THE RUNE TOMES U DONT NEED (CURRENT SETUP USES 4 TOMES)
+// THIS SCRIPT WORKS WITH 3 CLIENTS IN PARALLEL
 
 if not listexists "OutlandMallsRuneTomes"
     createlist "OutlandMallsRuneTomes"
 endif
+// RUNE TOME 1
 if not inlist "OutlandMallsRuneTomes" 1439680668
     sysmsg "adding 1 to list" 55
     pushlist "OutlandMallsRuneTomes" 1439680668
 endif
+// RUNE TOME 2
 if not inlist "OutlandMallsRuneTomes" 1185712905
     sysmsg "adding 2 to list" 55
     pushlist "OutlandMallsRuneTomes" 1185712905
 endif
+// RUNE TOME 3
 if not inlist "OutlandMallsRuneTomes" 1392448283
     sysmsg "adding 3 to list" 55
     pushlist "OutlandMallsRuneTomes" 1392448283
 endif
+// RUNE TOME 4
 if not inlist "OutlandMallsRuneTomes" 1439679560
     sysmsg "adding 4 to list" 55
     pushlist "OutlandMallsRuneTomes" 1439679560
 endif
-
-//if not inlist "OutlandMallsRuneTomes" 1080596107
-//    pushlist "OutlandMallsRuneTomes" 1080596107
-//endif
-//if not inlist "OutlandMallsRuneTomes" 1080612838
-//    pushlist "OutlandMallsRuneTomes" 1080612838
-//endif
 
 if not findtype 'runetome' backpack
     overhead 'NO TOME' 19
