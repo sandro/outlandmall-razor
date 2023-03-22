@@ -21,7 +21,7 @@ Global $scale = _WinAPI_EnumDisplaySettings('', $ENUM_CURRENT_SETTINGS)[0] / @De
 Global $logoutGump = 4282424686
 Global $atlasGumps[]
 Global $atlasCoords = [350, 320, 370, 340]
-Global $connectionLostColor = 7697773
+Global $connectionLostColor = 8026738
 ConsoleWrite("Scale = " & _WinAPI_EnumDisplaySettings('', $ENUM_CURRENT_SETTINGS)[0] & " / " & @DesktopWidth & " = " & $scale & @CRLF)
 Global $GUI = GUICreate("Outlands Mall", 400, 300)
 Global $GUICTRL = GUICtrlCreateEdit("", 0, 0, 400, 300)
@@ -75,8 +75,10 @@ Func IsConnectionLost($wh)
 	WinWaitActive($wh)
 	MouseMove(0,0,0)
 	Sleep(100)
-	Local $color = PixelGetColor(($size[0]/2)*$scale,($size[1]/2)*$scale, $wh)
-	Return $color == $connectionLostColor
+	$cx = $size[0]/2 * $scale
+	$cy = $size[1]/2 * $scale
+	Local $coords = PixelSearch($cx-40, $cy-40, $cx+40, $cy+40, $connectionLostColor, 0, 1, $wh)
+	Return UBound($coords) > 0
 EndFunc
 
 Func LoginToUO($wh)
@@ -210,6 +212,7 @@ Func Main()
 				Sleep(2000)
 				SyncAndLogin($wh)
 			ElseIf IsConnectionLost($wh) Then
+				GUILog("Connection lost")
 				Local $size = WinGetClientSize($wh)
 				MouseClick("", $size[0]/2, ($size[1]/2)+90)
 				Sleep(60000*1)
