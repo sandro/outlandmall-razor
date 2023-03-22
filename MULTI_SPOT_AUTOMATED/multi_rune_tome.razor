@@ -65,6 +65,7 @@ if not inlist "OutlandMallsRuneTomes" 1439679560
     pushlist "OutlandMallsRuneTomes" 1439679560
 endif
 
+dclick backpack
 if not findtype 'runetome' backpack
     overhead 'NO TOME' 19
     stop
@@ -137,15 +138,17 @@ while not dead
         say '[atlas'        
     stop
     elseif poplist 'runetomeSpots' front as spot
+        walk "West"
         sysmsg 'recalling to spot {{spot}} in {{myTome}}' 55
         dclick myTome
         waitforgump 167090027
         gumpresponse spot 167090027
         wait 3000
     endif
-        
+    
+    walk "North"
+    walk "South"
     skill 'hiding'
-    wait 5000
     sysmsg "…OutlandMall Start" 23
     wait 2000
     say "[coords"
@@ -208,9 +211,10 @@ while not dead
                         @ignore foundItem
                     endwhile
                 endwhile
-                wait 2000
                 sysmsg "…vendorEnd {{vendorID}} {{vendorName}}" 23
-                wait 2000
+                walk "North"
+                walk "South"
+                wait 1200
             endif
         endif
     endwhile

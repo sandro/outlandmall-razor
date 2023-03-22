@@ -21,6 +21,7 @@ Global $scale = _WinAPI_EnumDisplaySettings('', $ENUM_CURRENT_SETTINGS)[0] / @De
 Global $logoutGump = 4282424686
 Global $atlasGumps[]
 Global $atlasCoords = [350, 320, 370, 340]
+Global $connectionLostColor = 7697773
 ConsoleWrite("Scale = " & _WinAPI_EnumDisplaySettings('', $ENUM_CURRENT_SETTINGS)[0] & " / " & @DesktopWidth & " = " & $scale & @CRLF)
 Global $GUI = GUICreate("Outlands Mall", 400, 300)
 Global $GUICTRL = GUICtrlCreateEdit("", 0, 0, 400, 300)
@@ -66,6 +67,16 @@ EndFunc
 Func GetScaledChecksum($left, $top, $right, $bottom, $wh)
 	Local $cksum = PixelChecksum($left*$scale, $top*$scale, $right*$scale, $bottom*$scale, 1, $wh, 1)
 	return $cksum
+EndFunc
+
+Func IsConnectionLost($wh)
+	Local $size = WinGetClientSize($wh)
+	WinActivate($wh)
+	WinWaitActive($wh)
+	MouseMove(0,0,0)
+	Sleep(100)
+	Local $color = PixelGetColor(($size[0]/2)*$scale,($size[1]/2)*$scale, $wh)
+	Return $color == $connectionLostColor
 EndFunc
 
 Func LoginToUO($wh)
@@ -149,6 +160,19 @@ Func GatherUOHandles()
 	return $UOHandles
 EndFunc
 
+Func SyncAndLogin($wh)
+	SyncJournals()
+	Sleep(20000)
+	LoginToUO($wh)
+	GUILog("Waiting 60s before starting script")
+	Sleep(60000)
+	GUILog("Starting razor script " & WinGetTitle($wh))
+	WinActivate($wh)
+	WinWaitActive($wh)
+	Send($StartRazorHotkey) ; Start Script macro
+	Sleep(3000)
+EndFunc
+
 Func Main()
 	Local $UOHandles = GatherUOHandles()
 
@@ -184,16 +208,12 @@ Func Main()
 				Local $coords = GetLogoutGumpCoords($wh)
 				MouseClick("", $coords[2], $coords[3])
 				Sleep(2000)
-				SyncJournals()
-				Sleep(20000)
-				LoginToUO($wh)
-				GUILog("Waiting 60s before starting script")
-				Sleep(60000)
-				GUILog("Starting razor script " & WinGetTitle($wh))
-				WinActivate($wh)
-				WinWaitActive($wh)
-				Send($StartRazorHotkey) ; Start Script macro
-				Sleep(3000)
+				SyncAndLogin($wh)
+			ElseIf IsConnectionLost($wh) Then
+				Local $size = WinGetClientSize($wh)
+				MouseClick("", $size[0]/2, ($size[1]/2)+90)
+				Sleep(60000*1)
+				SyncAndLogin($wh)
 			Else
 				Sleep(7000)
 			EndIf
@@ -202,5 +222,5 @@ Func Main()
 	WEnd
 
 EndFunc
-;SyncJournals()
+
 Main()
