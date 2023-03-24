@@ -45,7 +45,7 @@ while not dead
                         wait timeout
                     elseif "Description: " in desc
                         //sysmsg "…bag {{desc}}" 23
-                    else
+                    elseif "paragon" in desc
                         sysmsg "…item {{desc}}" 23
                     endif
                 else
