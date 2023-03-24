@@ -36,21 +36,20 @@ pushlist 'runetomeSpots' 123
 pushlist 'runetomeSpots' 124
 pushlist 'runetomeSpots' 125
 
-
+dclick backpack
 if findtype "runetome" backpack as tome
     setvar! myTome tome
 else
     overhead "NO TOME" 18
     stop
 endif
-wait 5000
 
 while not dead
     if not atlist 'runetomeSpots' 0
-        wait 5000
-        say '[atlas'
+        sysmsg "Done!"
         stop
     elseif poplist 'runetomeSpots' front as spot
+        walk "West"
         overhead 'recalling to spot {{spot}}'
         dclick myTome
         waitforgump 167090027
@@ -58,9 +57,9 @@ while not dead
         wait 3000
     endif
 
+    walk "North"
+    walk "South"
     skill 'hiding'
-    wait timeout
-    wait 5000
     sysmsg "…OutlandMall Start" 23
     wait 2000
     say "[coords"
@@ -68,8 +67,12 @@ while not dead
     while not dead
         @hotkey 'Next Monster Target'
         @setvar! 'vendorID' lasttarget
+        getlabel 'vendorID' 'vendorName'
+        if "only]" in vendorName
+            continue
+        endif
+
         if noto 'vendorID' = invulnerable
-            getlabel 'vendorID' 'vendorName'
             if inlist 'vendors' 'vendorID'
                  sysmsg "…OutlandMall End" 23
                  break
@@ -77,10 +80,16 @@ while not dead
                 pushlist 'vendors' 'vendorID'
                 sysmsg "…vendorStart {{vendorID}} {{vendorName}}" 23
             endif
-            while not hidden
-                skill 'hiding'
-                wait timeout
-            endwhile
+
+            for 5
+                if not hidden
+                    skill 'hiding'
+                    wait 11000
+                else
+                    break
+                endif
+            endfor
+
             if insysmsg "The world will save in"
               while not insysmsg "World save complete."
                 overhead 'waiting for world save' 18
@@ -106,7 +115,7 @@ while not dead
                             wait timeout
                         elseif "Description: " in desc
                             //sysmsg "…bag {{desc}}" 23
-                        else
+                        elseif "paragon" in desc
                             sysmsg "…item {{desc}}" 23
                         endif
                     else
@@ -119,9 +128,11 @@ while not dead
                         @ignore foundItem
                     endwhile
                 endwhile
-                wait 2000
+                wait 1200
                 sysmsg "…vendorEnd {{vendorID}} {{vendorName}}" 23
-                wait 2000
+                walk "North"
+                walk "South"
+                wait 1200
             endif
         endif
     endwhile
