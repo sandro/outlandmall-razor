@@ -1,7 +1,7 @@
 // OutlandMall by Sandro & Gankstar
 setvar! timeout 650
 @clearignore
-clearsysmsg 
+clearsysmsg
 removelist 'vendors'
 createlist 'vendors'
 removelist "runetomeSpots"
@@ -65,6 +65,7 @@ if not inlist "OutlandMallsRuneTomes" 1439679560
     pushlist "OutlandMallsRuneTomes" 1439679560
 endif
 
+dclick backpack
 if not findtype 'runetome' backpack
     overhead 'NO TOME' 19
     stop
@@ -134,18 +135,20 @@ while not dead
     if not atlist 'runetomeSpots' 0
         skill 'hiding'
         wait 120000
-        say '[atlas'        
+        say '[atlas'
     stop
     elseif poplist 'runetomeSpots' front as spot
+        walk "West"
         sysmsg 'recalling to spot {{spot}} in {{myTome}}' 55
         dclick myTome
         waitforgump 167090027
         gumpresponse spot 167090027
         wait 3000
     endif
-        
+
+    walk "North"
+    walk "South"
     skill 'hiding'
-    wait 5000
     sysmsg "…OutlandMall Start" 23
     wait 2000
     say "[coords"
@@ -161,31 +164,36 @@ while not dead
             if inlist 'vendors' 'vendorID'
                  sysmsg "…OutlandMall End" 23
                  break
-            else 
+            else
                 pushlist 'vendors' 'vendorID'
                 sysmsg "…vendorStart {{vendorID}} {{vendorName}}" 23
             endif
-      
-            while not hidden
-                skill 'hiding'
-                wait timeout
-            endwhile
+
+            for 5
+                if not hidden
+                    skill 'hiding'
+                    wait 11000
+                else
+                    break
+                endif
+            endfor
+
             if insysmsg "The world will save in"
               while not insysmsg "World save complete."
                 overhead 'waiting for world save' 18
                 pause 1000
               endwhile
-              clearsysmsg 
+              clearsysmsg
             endif
-            
+
             if findtype 3701 'vendorID' as mainBackpack
                 setvar! container mainBackpack
                 setvar! searching 1
                 dclick 'mainBackpack'
                 wait timeout
                 @ignore mainBackpack
-    
-                while searching = 1            
+
+                while searching = 1
                     if findtype 2472|2473|2474|2475|2476|2480|2481|2482|2604|2605|2606|2607|2608|2609|2610|2611|2612|2613|2614|2615|2616|2617|2618|2619|2620|2621|2622|2623|2624|2625|2626|2627|2628|2629|2630|2631|2632|2633|2634|2635|2636|2637|2638|2639|2640|2641|2642|2643|2711|2712|2713|2714|2715|2716|2717|2718|3644|3645|3646|3647|3648|3649|3650|3651|3701|3702|3703|3704|3705|3706|3708|3709|3710|3711|3712|7808|7809|9002|9003|11010|11011|12657|29833 mainBackpack as subContainer
                         @ignore subContainer
                         setvar! container subContainer
@@ -195,7 +203,7 @@ while not dead
                             wait timeout
                         elseif "Description: " in desc
                             //sysmsg "…bag {{desc}}" 23
-                        else
+                        elseif "paragon" in desc
                             sysmsg "…item {{desc}}" 23
                         endif
                     else
@@ -208,9 +216,10 @@ while not dead
                         @ignore foundItem
                     endwhile
                 endwhile
-                wait 2000
                 sysmsg "…vendorEnd {{vendorID}} {{vendorName}}" 23
-                wait 2000
+                walk "North"
+                walk "South"
+                wait 1200
             endif
         endif
     endwhile
