@@ -131,6 +131,8 @@ wait 60000
 //    endif
 // endif
 
+walk "West"
+
 while not dead
     if not atlist 'runetomeSpots' 0
         skill 'hiding'
@@ -169,10 +171,15 @@ while not dead
                 sysmsg "…vendorStart {{vendorID}} {{vendorName}}" 23
             endif
       
-            while not hidden
-                skill 'hiding'
-                wait timeout
-            endwhile
+            for 5
+                if not hidden
+                    skill 'hiding'
+                    wait 11000
+                else
+                    break
+                endif
+            endfor
+            
             if insysmsg "The world will save in"
               while not insysmsg "World save complete."
                 overhead 'waiting for world save' 18
@@ -198,7 +205,7 @@ while not dead
                             wait timeout
                         elseif "Description: " in desc
                             //sysmsg "…bag {{desc}}" 23
-                        else
+                        elseif "paragon" in desc
                             sysmsg "…item {{desc}}" 23
                         endif
                     else
