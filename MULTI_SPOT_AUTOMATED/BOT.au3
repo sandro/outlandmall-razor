@@ -70,23 +70,13 @@ EndFunc
 
 Func LoginToUO($wh)
 	GUILog("Logging back in  " & WinGetTitle($wh))
-	Sleep(8000)
-	WinActivate($wh)
-	WinWaitActive($wh)
-	Send("{ENTER}")
-	Sleep(6000)
-    WinActivate($wh)
-	WinWaitActive($wh)
-	Send("{ENTER}")
-	Sleep(6000)
-    WinActivate($wh)
-	WinWaitActive($wh)
-	Send("{ENTER}")
-	Sleep(6000)
-    WinActivate($wh)
-	WinWaitActive($wh)
-	Send("{ENTER}")
-	Sleep(6000)
+	While StringLeft(WinGetTitle($wh), 4) <> "UO -"
+		WinActivate($wh)
+		WinWaitActive($wh)
+		Send("{ENTER}")
+		Sleep(2000)
+		GUILog("Enter and Wait  " & WinGetTitle($wh))
+	WEnd
 EndFunc
 
 Func GetTZOffset()
