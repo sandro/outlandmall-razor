@@ -140,6 +140,7 @@ while not dead
     elseif poplist 'runetomeSpots' front as spot
         walk "West"
         sysmsg 'recalling to spot {{spot}} in {{myTome}}' 55
+        wait 1000
         dclick myTome
         waitforgump 167090027
         gumpresponse spot 167090027

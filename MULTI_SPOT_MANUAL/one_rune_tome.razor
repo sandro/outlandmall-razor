@@ -51,6 +51,7 @@ while not dead
     elseif poplist 'runetomeSpots' front as spot
         walk "West"
         overhead 'recalling to spot {{spot}}'
+        wait 1000
         dclick myTome
         waitforgump 167090027
         gumpresponse spot 167090027
