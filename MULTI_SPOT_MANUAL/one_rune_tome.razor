@@ -49,7 +49,7 @@ while not dead
         sysmsg "Done!"
         stop
     elseif poplist 'runetomeSpots' front as spot
-        walk "West"
+
         overhead 'recalling to spot {{spot}}'
         wait 1000
         dclick myTome
@@ -58,8 +58,7 @@ while not dead
         wait 3000
     endif
 
-    walk "North"
-    walk "South"
+
     skill 'hiding'
     sysmsg "…OutlandMall Start" 23
     wait 2000
@@ -131,8 +130,7 @@ while not dead
                 endwhile
                 wait 1200
                 sysmsg "…vendorEnd {{vendorID}} {{vendorName}}" 23
-                walk "North"
-                walk "South"
+
                 wait 1200
             endif
         endif

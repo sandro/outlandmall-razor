@@ -138,7 +138,7 @@ while not dead
         say '[atlas'
     stop
     elseif poplist 'runetomeSpots' front as spot
-        walk "West"
+
         sysmsg 'recalling to spot {{spot}} in {{myTome}}' 55
         wait 1000
         dclick myTome
@@ -147,8 +147,7 @@ while not dead
         wait 3000
     endif
 
-    walk "North"
-    walk "South"
+
     skill 'hiding'
     sysmsg "…OutlandMall Start" 23
     wait 2000
@@ -218,8 +217,8 @@ while not dead
                     endwhile
                 endwhile
                 sysmsg "…vendorEnd {{vendorID}} {{vendorName}}" 23
-                walk "North"
-                walk "South"
+
+
                 wait 1200
             endif
         endif
