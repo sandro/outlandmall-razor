@@ -152,7 +152,7 @@ EndFunc
 
 Func SyncAndLogin($wh)
 	SyncJournals()
-	Sleep(20000)
+	Sleep(60000*30)
 	LoginToUO($wh)
 	GUILog("Waiting 60s before starting script")
 	Sleep(90000)
