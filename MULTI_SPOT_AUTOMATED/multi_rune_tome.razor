@@ -149,7 +149,7 @@ while not dead
 
 
     skill 'hiding'
-    sysmsg "…OutlandMall Start v1" 23
+    sysmsg "…OutlandMall Start v2" 23
     wait 2000
     say "[coords"
     wait 2000
@@ -202,7 +202,7 @@ while not dead
                             dclick subContainer
                             wait timeout
                         elseif "Description: " in desc
-                            //sysmsg "…bag {{desc}}" 23
+                            sysmsg "…item ID:{{subContainer}} {{desc}}" 23
                         elseif "paragon" in desc
                             sysmsg "…item ID:{{subContainer}} {{desc}}" 23
                         endif
