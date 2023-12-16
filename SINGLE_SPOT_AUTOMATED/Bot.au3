@@ -11,6 +11,7 @@ Global $APIKey = "ENTER API KEY HERE"
 Global $FilesToUpload = 1
 Global $PathToCURL = "C:\Windows\System32\curl.exe"
 Global $QuitHotkey = "q"
+Global $ClearGumpKey = "e"
 Global $StartRazorHotkey = "w"
 
 
@@ -154,6 +155,7 @@ Func SyncAndLogin($wh)
 	SyncJournals()
 	Sleep(60000*30)
 	LoginToUO($wh)
+	Send($ClearGumpKey) ; Clear Gump
 	GUILog("Waiting 180s before starting script")
 	Sleep(60000*3)
 	GUILog("Starting razor script " & WinGetTitle($wh))
