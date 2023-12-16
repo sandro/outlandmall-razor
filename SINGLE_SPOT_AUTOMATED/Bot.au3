@@ -155,6 +155,7 @@ Func SyncAndLogin($wh)
 	SyncJournals()
 	Sleep(60000*30)
 	LoginToUO($wh)
+	Sleep(30000)
 	Send($ClearGumpKey) ; Clear Gump
 	GUILog("Waiting 180s before starting script")
 	Sleep(60000*3)
