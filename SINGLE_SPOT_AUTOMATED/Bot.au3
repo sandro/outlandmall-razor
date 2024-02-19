@@ -2,6 +2,9 @@
 #include <Array.au3>
 #include <Date.au3>
 #include <File.au3>
+#include <WinAPISysWin.au3>
+#include <WindowsConstants.au3>
+#include <GuiTab.au3>
 #RequireAdmin
 
 ; #########
@@ -20,8 +23,6 @@ Global $StartRazorHotkey = "w"
 AutoItSetOption("PixelCoordMode", 2)
 Global $scale = _WinAPI_EnumDisplaySettings('', $ENUM_CURRENT_SETTINGS)[0] / @DesktopWidth
 Global $logoutGump = 4282424686
-Global $atlasGumps[]
-Global $atlasCoords = [350, 320, 370, 340]
 Global $connectionLostColor = 8684667
 ConsoleWrite("Scale = " & _WinAPI_EnumDisplaySettings('', $ENUM_CURRENT_SETTINGS)[0] & " / " & @DesktopWidth & " = " & $scale & @CRLF)
 Global $GUI = GUICreate("Outlands Mall", 400, 300)
@@ -40,10 +41,10 @@ EndFunc
 Func GetLogoutGumpCoords($wh)
 	Local $size = WinGetClientSize($wh)
 	Local $coords[4]
-	$coords[0] = $size[0]/2-50
-	$coords[1] = $size[1]/2+30
-	$coords[2] = $size[0]/2+45
-	$coords[3] = $size[1]/2+55
+	$coords[0] = $size[0]/2 - 25 *$scale
+	$coords[1] = $size[1]/2 + 15 *$scale
+	$coords[2] = $size[0]/2 + 15 *$scale
+	$coords[3] = $size[1]/2 + 25 *$scale
 	return $coords
 EndFunc
 
@@ -53,15 +54,6 @@ Func GetLogoutChecksum($wh)
 	Local $coords = GetLogoutGumpCoords($wh)
 	Local $cksum = GetScaledChecksum($coords[0], $coords[1], $coords[2], $coords[3], $wh)
 	Print("Logout Checksum: " & $cksum)
-	return $cksum
-EndFunc
-
-Func GetAtlasChecksum($wh)
-	MouseMove(0, 0, 0)
-	Sleep(1000)
-	Send("{Enter}{ASC 091}atlas {ENTER}")
-	Sleep(3000)
-	Local $cksum = GetScaledChecksum($atlasCoords[0], $atlasCoords[1], $atlasCoords[2], $atlasCoords[3], $wh)
 	return $cksum
 EndFunc
 
@@ -81,14 +73,14 @@ Func IsConnectionLost($wh)
 EndFunc
 
 Func LoginToUO($wh)
-    GUILog("Logging back in  " & WinGetTitle($wh))
-    While StringLeft(WinGetTitle($wh), 4) <> "UO -"
-        WinActivate($wh)
-        WinWaitActive($wh)
-        Send("{ENTER}")
-        Sleep(2000)
-        GUILog("Enter and Wait  " & WinGetTitle($wh))
-    WEnd
+	GUILog("Logging back in	" & WinGetTitle($wh))
+	While StringLeft(WinGetTitle($wh), 4) <> "UO -"
+		WinActivate($wh)
+		WinWaitActive($wh)
+		Send("{ENTER}")
+		Sleep(2000)
+		GUILog("Enter and Wait	" & WinGetTitle($wh))
+	WEnd
 EndFunc
 
 Func GetTZOffset()
@@ -108,16 +100,15 @@ Func SyncJournals()
 		Exit
 	EndIf
 
-	local $sortableFiles[10][2]
-	ReDim $sortableFiles[$journalFiles[0]][2]
-	Print("len" & $journalFiles[0])
-	For $i=0 to $journalFiles[0]-1
-		$sortableFiles[$i][0] = $journalFiles[$i+1]
-		$sortableFiles[$i][1] = FileGetTime($journalFiles[$i+1],0,1)
+	local $sortableFiles[$journalFiles[0]][2]
+	Print("found " & $journalFiles[0] & " journal files")
+	For $i=1 to UBound($journalFiles) - 1
+		$sortableFiles[$i-1][0] = $journalFiles[$i]
+		$sortableFiles[$i-1][1] = FileGetTime($journalFiles[$i],0,1)
 	Next
 	_ArraySort($sortableFiles,1,0,0,1)
 
-	For $i=0 To UBound($sortableFiles)
+	For $i=0 To UBound($sortableFiles) - 1
 		local $file = $sortableFiles[$i][0]
 		If $i >= $FilesToUpload Then
 			ExitLoop
@@ -129,11 +120,9 @@ Func SyncJournals()
 		GUILog("Upload ok? " & String($ok == 0) & " file num: " & $i)
 	Next
 	;_ArrayDisplay($sortableFiles)
-
- EndFunc
+EndFunc
 
 Func GatherUOHandles()
-	;"[CLASS:SDL_app]"
 	Local $windows = WinList("UO - ")
 	Local $UOHandles[$windows[0][0]]
 	Local $numWindows = $windows[0][0]
@@ -151,12 +140,23 @@ Func GatherUOHandles()
 	return $UOHandles
 EndFunc
 
+Func GatherRazorHandles($UOHandles)
+	Local $handles[UBound($UOHandles)]
+	Local $matches
+	AutoItSetOption("WinTitleMatchMode", 2)
+	For $x = 0 to UBound($UOHandles) - 1
+		$matches = StringRegExp(WinGetTitle($UOHandles[$x]), 'UO - (.+?) -', $STR_REGEXPARRAYMATCH)
+		_ArrayPush($handles, WinGetHandle($matches[0] & " ([None])"))
+	Next
+	AutoItSetOption("WinTitleMatchMode", 1)
+	return $handles
+EndFunc
+
 Func SyncAndLogin($wh)
 	SyncJournals()
 	Sleep(60000*30)
 	LoginToUO($wh)
 	Sleep(30000)
-	Send($ClearGumpKey) ; Clear Gump
 	GUILog("Waiting 180s before starting script")
 	Sleep(60000*3)
 	GUILog("Starting razor script " & WinGetTitle($wh))
@@ -168,33 +168,32 @@ EndFunc
 
 Func Main()
 	Local $UOHandles = GatherUOHandles()
+	Local $RazorHandles = GatherRazorHandles($UOHandles)
 
-    For $wh in $UOHandles
+	For $wh in $UOHandles
 		WinActivate($wh)
 		WinWaitActive($wh)
 		SendKeepActive($wh)
 		Sleep(1000)
-		$atlasGumps[$wh] = GetAtlasChecksum($wh)
-		MouseClick("right", $atlasCoords[0], $atlasCoords[1])
-		GUILog("Have atlas checksum for " & WinGetTitle($wh) & " " & $atlasGumps[$wh])
 		GUILog("Starting script in window " & WinGetTitle($wh))
-        Send($StartRazorHotkey) ; Start Script macro
-        Sleep(3000)
-    Next
+		Send($StartRazorHotkey) ; Start Script macro
+		Sleep(3000)
+	Next
 
 	While True
-		For $wh in $UOHandles
-			GUILog("wh is " & $wh)
-			GUILog("Checking for atlas " & winGetTitle($wh))
-
+		For $i = 0 to UBound($UOHandles) - 1
+			Local $wh = $UOHandles[$i]
+			Local $rwh = $RazorHandles[$i]
+			GUILog("Checking if script is done " & WinGetTitle($rwh))
+			Local $tabbar = ControlGetHandle($rwh, "", "[CLASS:WindowsForms10.SysTabControl32.app.0.1_r3_ad1]")
+			_GUICtrlTab_ClickTab($tabbar, 9) ; Click on the Scripts tab
 			Sleep(1000)
-			SendKeepActive($wh)
-			local $activated = WinActivate($wh)
-			GUILog("activated? " & $activated)
-			local $waitactive = WinWaitActive($wh)
-			GUILog("waitactive? " & $waitactive)
-			MouseMove(0,0,0)
-			If GetScaledChecksum($atlasCoords[0], $atlasCoords[1], $atlasCoords[2], $atlasCoords[3], $wh) == $atlasGumps[$wh] Then
+			Local $scriptPlaying = ControlGetText($rwh, "", "[TEXT:Stop]")
+			If Not $scriptPlaying Then
+				WinActivate($wh)
+				WinWaitActive($wh)
+				SendKeepActive($wh)
+				Send($ClearGumpKey) ; Clear Gump
 				GUILog("Sending Quit Hotkey for " & WinGetTitle($wh))
 				Send($QuitHotkey) ; QuitGame macro
 				Sleep(1000)
