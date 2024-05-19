@@ -73,14 +73,16 @@ Func IsConnectionLost($wh)
 EndFunc
 
 Func LoginToUO($wh)
-	GUILog("Logging back in	" & WinGetTitle($wh))
-	While StringLeft(WinGetTitle($wh), 4) <> "UO -"
-		WinActivate($wh)
-		WinWaitActive($wh)
 		Send("{ENTER}")
-		Sleep(2000)
-		GUILog("Enter and Wait	" & WinGetTitle($wh))
-	WEnd
+		Sleep(5000)
+		Send("{ENTER}")
+		Sleep(5000)
+		Send("{ENTER}")
+		Sleep(5000)
+		Send("{ENTER}")
+		Sleep(5000)
+		Send("{ENTER}")
+		Sleep(5000)
 EndFunc
 
 Func GetTZOffset()
