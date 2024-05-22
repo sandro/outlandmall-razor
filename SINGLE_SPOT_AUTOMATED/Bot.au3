@@ -81,8 +81,6 @@ Func LoginToUO($wh)
 		Sleep(5000)
 		Send("{ENTER}")
 		Sleep(5000)
-		Send("{ENTER}")
-		Sleep(5000)
 EndFunc
 
 Func GetTZOffset()
